@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a1226">
+<meta name="robots" content="noindex,nofollow">
+<title>AI 管家中心</title>
+<style>
+:root{--bg:#070d1f;--panel:rgba(16,28,58,.82);--line:rgba(110,160,255,.22);--txt:#e6edff;--mut:#8b9bc4;--acc:#5fd3ff;--gold:#f5c14b;--green:#4be39a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;background:linear-gradient(180deg,rgba(7,13,31,.55),rgba(7,13,31,.95) 60%),url(assets/bg-city.jpg) center top/cover fixed}
+.wrap{max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 14px 40px}
+header{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 16px;backdrop-filter:blur(8px)}
+header h1{font-size:20px;font-weight:600;letter-spacing:1px}
+header .upd{font-size:11px;color:var(--mut);text-align:right}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;margin-top:12px;backdrop-filter:blur(8px);box-shadow:0 0 24px rgba(40,90,200,.12) inset}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);padding:10px 0}
+.stat{text-align:center;border-left:1px solid var(--line)}.stat:first-child{border:0}
+.stat .k{font-size:12px;color:var(--mut)}.stat .v{font-size:22px;font-weight:700;margin-top:2px}
+.stat .v small{font-size:14px;color:var(--mut);font-weight:500}
+.floors{padding:8px}
+.floor{position:relative;container-type:inline-size;border-radius:12px;overflow:hidden;margin:6px 0;border:1px solid rgba(110,160,255,.15)}
+.floor img{display:block;width:100%;height:auto;image-rendering:pixelated}
+.floor .name{position:absolute;left:50%;transform:translateX(-50%);top:3.5cqw;min-width:28cqw;display:flex;align-items:center;justify-content:center;gap:1.6cqw;padding:1.6cqw 3.4cqw;border-radius:99px;background:#0f1d38;border:1.5px solid rgba(160,230,200,.55);font-size:4.2cqw;font-weight:600;white-space:nowrap;box-shadow:0 0 12px rgba(75,227,154,.25)}
+.floor.cfo .name{top:1.5cqw}
+.floor .name i{font-style:normal;font-size:3.6cqw;background:#1f4d3b;border-radius:50%;width:6.4cqw;height:6.4cqw;display:grid;place-items:center}
+.floor .badge{position:absolute;right:1cqw;top:1.4cqw;min-width:29cqw;min-height:8.5cqw;padding:1.4cqw 2.4cqw;border-radius:2.4cqw;background:#0b1630;border:1px solid rgba(95,211,255,.45);color:#9ee6ff;font-size:3.1cqw;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.floor .state{position:absolute;left:2cqw;bottom:2cqw;font-size:3cqw;padding:1cqw 2.4cqw;border-radius:99px;background:rgba(5,12,28,.8);border:1px solid var(--line);display:flex;align-items:center;gap:1.4cqw}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.dot.idle{background:var(--gold);box-shadow:0 0 8px var(--gold)}.dot.offline{background:#666;box-shadow:none}
+.sec{padding:14px 16px}
+.sec h2{font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sec h2 span{font-size:12px;color:var(--mut);font-weight:400}
+.row{display:flex;gap:10px;padding:9px 0;border-top:1px solid rgba(110,160,255,.1);font-size:13.5px;align-items:flex-start}
+.row:first-of-type{border-top:0}
+.row .t{color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:40px}
+.row .a{color:var(--gold);white-space:nowrap}
+.row .x{flex:1;line-height:1.45}
+.row .sub{display:block;font-size:12px;color:var(--mut);margin-top:2px}
+.chk{width:16px;height:16px;border:1.5px solid var(--acc);border-radius:4px;flex:none;margin-top:2px}
+.chk.on{background:var(--green);border-color:var(--green);display:grid;place-items:center;color:#062;font-size:11px;font-weight:900}
+.overdue{color:#ff7a7a!important}
+.empty{text-align:center;color:var(--mut);font-size:13px;padding:14px 6px 6px;line-height:1.6}
+.empty b{display:block;font-size:26px;margin-bottom:4px}
+.day{font-size:11px;color:var(--mut);margin:10px 0 2px;letter-spacing:1px}
+.err{padding:16px;color:#ffb4b4;font-size:13px}
+footer{text-align:center;color:var(--mut);font-size:11px;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1 id="title">AI 管家中心</h1><div class="upd" id="upd"></div></header>
+  <div class="card stats" id="stats"></div>
+  <div class="card floors" id="floors"></div>
+  <div class="card sec"><h2>待办 <span id="todoCount"></span></h2><div id="todos"></div></div>
+  <div class="card sec"><h2>已完成 <span id="doneCount"></span></h2><div id="done"></div></div>
+  <div class="card sec"><h2>最近日志 <span id="logCount"></span></h2><div id="logs"></div></div>
+  <footer>数据来源：data.json · 由管家定时更新</footer>
+</div>
+<script>
+const TZ='Asia/Kuala_Lumpur';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=(d,o)=>new Intl.DateTimeFormat('zh-CN',Object.assign({timeZone:TZ,hour12:false},o)).format(new Date(d));
+const dayKey=d=>fmt(d,{year:'numeric',month:'2-digit',day:'2-digit'});
+const hm=d=>fmt(d,{hour:'2-digit',minute:'2-digit'});
+const md=d=>fmt(d,{month:'numeric',day:'numeric'});
+const when=d=>{const today=dayKey(Date.now());return dayKey(d)===today?'今天 '+hm(d):md(d)+' '+hm(d)};
+function render(D){
+  document.title=D.title||'AI 管家中心';
+  document.getElementById('title').textContent=D.title||'AI 管家中心';
+  if(D.updated)document.getElementById('upd').innerHTML='更新于<br>'+esc(when(D.updated));
+  const agents=D.agents||[],todos=D.todos||[],done=D.done||[],logs=(D.logs||[]).slice().sort((a,b)=>new Date(b.time)-new Date(a.time));
+  // stats: 今日事件 = 今天（吉隆坡时间）的日志 + 今天完成的事项；如今天无记录则显示最近一天
+  const today=dayKey(Date.now());
+  let ref=today, cnt=logs.filter(l=>dayKey(l.time)===today).length+done.filter(x=>x.doneAt&&dayKey(x.doneAt)===today).length;
+  let label='今日事件';
+  if(!cnt&&logs.length){ref=dayKey(logs[0].time);cnt=logs.filter(l=>dayKey(l.time)===ref).length;label=md(logs[0].time)+' 事件'}
+  const active=agents.filter(a=>a.state!=='offline').length;
+  const reminders=todos.length;
+  document.getElementById('stats').innerHTML=
+    `<div class="stat"><div class="k">${esc(label)}</div><div class="v">${cnt}</div></div>`+
+    `<div class="stat"><div class="k">助手在线</div><div class="v">${active}<small>/${agents.length}</small></div></div>`+
+    `<div class="stat"><div class="k">待办提醒</div><div class="v">${reminders}</div></div>`;
+  document.getElementById('floors').innerHTML=agents.map(a=>`
+    <div class="floor ${esc(a.id)}">
+      <img src="${esc(a.image)}" alt="${esc(a.name)} 的办公室">
+      <div class="name"><i>${esc(a.icon||'🤖')}</i>${esc(a.name)}</div>
+      <div class="badge">${esc(a.status||'')}</div>
+      <div class="state"><span class="dot ${esc(a.state)}"></span>${esc(a.stateText||'')}</div>
+    </div>`).join('');
+  const now=Date.now();
+  const sortedTodos=todos.slice().sort((a,b)=>new Date(a.due||8.64e15)-new Date(b.due||8.64e15));
+  document.getElementById('todoCount').textContent=todos.length?todos.length+' 项':'';
+  document.getElementById('todos').innerHTML=sortedTodos.length?sortedTodos.map(t=>{
+    const od=t.due&&new Date(t.due)<now;
+    const bits=[];
+    if(t.due)bits.push(`<span class="${od?'overdue':''}">截止 ${esc(when(t.due))}${od?'（已逾期）':''}</span>`);
+    if(t.remind)bits.push('⏰ 提醒 '+esc(when(t.remind)));
+    if(t.agent)bits.push(esc(t.agent));
+    return `<div class="row"><div class="chk"></div><div class="x">${esc(t.title)}<span class="sub">${bits.join(' · ')}${t.note?'<br>'+esc(t.note):''}</span></div></div>`}).join('')
+    :`<div class="empty"><b>🌙</b>目前没有待办，好好休息吧～<br>想记什么，直接跟管家说一声就行。</div>`;
+  const sortedDone=done.slice().sort((a,b)=>new Date(b.doneAt)-new Date(a.doneAt));
+  document.getElementById('doneCount').textContent=done.length?done.length+' 项':'';
+  document.getElementById('done').innerHTML=sortedDone.length?sortedDone.map(t=>`<div class="row"><div class="chk on">✓</div><div class="x">${esc(t.title)}<span class="sub">${t.doneAt?'完成于 '+esc(when(t.doneAt)):''}${t.agent?' · '+esc(t.agent):''}</span></div></div>`).join('')
+    :`<div class="empty">还没有完成的待办事项。</div>`;
+  document.getElementById('logCount').textContent=logs.length?logs.length+' 条':'';
+  let html='',last='';
+  logs.slice(0,30).forEach(l=>{const k=dayKey(l.time);if(k!==last){html+=`<div class="day">${k===today?'今天':esc(fmt(l.time,{month:'long',day:'numeric',weekday:'short'}))}</div>`;last=k}
+    html+=`<div class="row"><div class="t">${esc(hm(l.time))}</div><div class="a">${esc(l.agent)}</div><div class="x">${esc(l.text)}</div></div>`});
+  document.getElementById('logs').innerHTML=html||`<div class="empty">暂无日志。</div>`;
+}
+fetch('data.json?_='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(render)
+ .catch(e=>{document.getElementById('floors').innerHTML=`<div class="err">无法读取 data.json（${esc(e.message)}）。请通过网页服务器打开，而不是直接双击文件。</div>`});
+</script>
+</body>
+</html>

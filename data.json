@@ -1,0 +1,38 @@
+{
+  "title": "AI 管家中心",
+  "updated": "2026-10-18T23:20:00+08:00",
+  "timezone": "Asia/Kuala_Lumpur",
+  "agents": [
+    {
+      "id": "butler",
+      "name": "日常管家",
+      "icon": "🏠",
+      "image": "assets/office-butler.jpg",
+      "state": "online",
+      "stateText": "工作中",
+      "status": "已清理 437 封邮件"
+    },
+    {
+      "id": "cfo",
+      "name": "CFO Bot",
+      "icon": "💹",
+      "image": "assets/office-cfo.jpg",
+      "state": "idle",
+      "stateText": "待命中",
+      "status": "待命中"
+    }
+  ],
+  "todos": [],
+  "done": [],
+  "logs": [
+    { "time": "2026-10-18T08:43:00+08:00", "agent": "日常管家", "text": "清理两个邮箱的已读付款通知，约 131 封" },
+    { "time": "2026-10-18T09:07:00+08:00", "agent": "日常管家", "text": "清理 Vantage 邮件，共 182 封" },
+    { "time": "2026-10-18T22:22:00+08:00", "agent": "日常管家", "text": "清理 CIMB 邮件，共 124 封" },
+    { "time": "2026-10-18T22:25:00+08:00", "agent": "日常管家", "text": "恢复 13 份 CIMB 账单与 Tax Relief 汇总" }
+  ],
+  "_schema": {
+    "todos": "{ \"id\": \"t1\", \"title\": \"交水电费\", \"agent\": \"日常管家\", \"due\": \"2026-10-25T09:00:00+08:00\", \"remind\": \"2026-10-24T20:00:00+08:00\", \"note\": \"可选\" }",
+    "done": "{ \"id\": \"t1\", \"title\": \"...\", \"agent\": \"日常管家\", \"doneAt\": \"2026-10-25T10:00:00+08:00\" }",
+    "logs": "{ \"time\": \"ISO 时间\", \"agent\": \"日常管家\", \"text\": \"做了什么\" }"
+  }
+}
